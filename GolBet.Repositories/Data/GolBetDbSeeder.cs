@@ -22,56 +22,56 @@ public static class GolBetDbSeeder
             new Team
             {
                 Name = "Atlético Nacional",
-                LogoUrl = null,
+                LogoUrl = "https://ssl.gstatic.com/onebox/media/sports/logos/optimized/i6-Yda76iPfeYEg4JcNbuw_64x64.png",
                 CreatedAt = now,
                 UpdatedAt = now
             },
             new Team
             {
                 Name = "Millonarios FC",
-                LogoUrl = null,
+                LogoUrl = "https://a.espncdn.com/i/teamlogos/soccer/500/5484.png",
                 CreatedAt = now,
                 UpdatedAt = now
             },
             new Team
             {
                 Name = "América de Cali",
-                LogoUrl = null,
+                LogoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2PD-7KodNmPbvpcZ1jlpopwQZMN5sLTiupI_A7Tnp-w&s=10",
                 CreatedAt = now,
                 UpdatedAt = now
             },
             new Team
             {
                 Name = "Independiente Medellín",
-                LogoUrl = null,
+                LogoUrl = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/2690.png",
                 CreatedAt = now,
                 UpdatedAt = now
             },
             new Team
             {
                 Name = "Deportivo Cali",
-                LogoUrl = null,
+                LogoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRomx812xkCacDIPtPwbLbcWUlipMhQ96j2DvtwifILcw&s",
                 CreatedAt = now,
                 UpdatedAt = now
             },
             new Team
             {
                 Name = "Junior FC",
-                LogoUrl = null,
+                LogoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy6B8_XmfvVkmxansSP3_Rk27_UKNcVyD_RxUm6jPSnw&s=10",
                 CreatedAt = now,
                 UpdatedAt = now
             },
             new Team
             {
                 Name = "Santa Fe",
-                LogoUrl = null,
+                LogoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRd6yIwkaVvVtfCigbZHu4m_wGfT0IguybkyhFANKw_hw&s=10",
                 CreatedAt = now,
                 UpdatedAt = now
             },
             new Team
             {
                 Name = "Once Caldas",
-                LogoUrl = null,
+                LogoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWH_GuXMnv61B1XnAmyHGbYrT45OfCO8uy0HMmAc5ZEA&s",
                 CreatedAt = now,
                 UpdatedAt = now
             }

@@ -2,12 +2,43 @@
 
 @{
     ViewData["Title"] = "Partidos";
+
+    var currentStatus = Context.Request.Query["status"].ToString();
 }
 
 <div class="container py-4">
     <div class="text-center mb-4">
         <h1 class="display-5 fw-bold">Partidos</h1>
         <p class="text-muted">Consulta los próximos encuentros y sus cuotas.</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
+        <a asp-controller="Matches"
+           asp-action="Index"
+           class="btn @(string.IsNullOrEmpty(currentStatus) ? "btn-success" : "btn-outline-success")">
+            Todos
+        </a>
+
+        <a asp-controller="Matches"
+           asp-action="Index"
+           asp-route-status="Programado"
+           class="btn @(currentStatus == "Programado" ? "btn-success" : "btn-outline-success")">
+            Programados
+        </a>
+
+        <a asp-controller="Matches"
+           asp-action="Index"
+           asp-route-status="EnVivo"
+           class="btn @(currentStatus == "EnVivo" ? "btn-success" : "btn-outline-success")">
+            En Vivo
+        </a>
+
+        <a asp-controller="Matches"
+           asp-action="Index"
+           asp-route-status="Finalizado"
+           class="btn @(currentStatus == "Finalizado" ? "btn-success" : "btn-outline-success")">
+            Finalizados
+        </a>
     </div>
 
     @if (!Model.Any())

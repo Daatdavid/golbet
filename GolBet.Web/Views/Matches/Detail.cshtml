@@ -1,0 +1,171 @@
+@model GolBet.Services.DTOs.MatchDto
+
+@{
+    ViewData["Title"] = "Detalle del partido";
+
+    var colombiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+    var matchDateUtc = DateTime.SpecifyKind(Model.MatchDate, DateTimeKind.Utc);
+    var colombiaDate = TimeZoneInfo.ConvertTimeFromUtc(matchDateUtc, colombiaTimeZone);
+
+    var statusText = Model.Status switch
+    {
+        GolBet.Entities.Enums.MatchStatus.Programado => "Programado",
+        GolBet.Entities.Enums.MatchStatus.EnVivo => "En Vivo",
+        GolBet.Entities.Enums.MatchStatus.Finalizado => "Finalizado",
+        _ => "Desconocido"
+    };
+
+    var statusClass = Model.Status switch
+    {
+        GolBet.Entities.Enums.MatchStatus.Programado => "bg-primary",
+        GolBet.Entities.Enums.MatchStatus.EnVivo => "bg-danger",
+        GolBet.Entities.Enums.MatchStatus.Finalizado => "bg-secondary",
+        _ => "bg-dark"
+    };
+
+    var canBet = Model.Status != GolBet.Entities.Enums.MatchStatus.Programado;
+}
+
+<div class="container py-4">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Matches" asp-action="Index">Partidos</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Detalle
+            </li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <div class="text-center mb-4">
+                <span class="badge @statusClass fs-6">
+                    @statusText
+                </span>
+
+                <div class="text-muted mt-2">
+                    @colombiaDate.ToString("dd/MM/yyyy HH:mm") 🇨🇴
+                </div>
+            </div>
+
+            <div class="row text-center align-items-center">
+
+                <div class="col-12 col-md-5">
+                    @if (!string.IsNullOrWhiteSpace(Model.HomeTeamLogoUrl))
+                    {
+                        <img src="@Model.HomeTeamLogoUrl"
+                             alt="@Model.HomeTeamName"
+                             class="img-fluid mb-3"
+                             style="width: 150px; height: 150px; object-fit: contain;" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center mx-auto mb-3"
+                             style="width: 150px; height: 150px;">
+                            <strong class="fs-3">FC</strong>
+                        </div>
+                    }
+
+                    <h2 class="fw-bold">@Model.HomeTeamName</h2>
+                </div>
+
+                <div class="col-12 col-md-2 my-4 my-md-0">
+                    @if (Model.Status == GolBet.Entities.Enums.MatchStatus.Finalizado ||
+                         Model.Status == GolBet.Entities.Enums.MatchStatus.EnVivo)
+                    {
+                        <div class="display-5 fw-bold">
+                            @Model.HomeScore - @Model.AwayScore
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="fs-2 fw-bold text-muted">
+                            VS
+                        </div>
+                    }
+                </div>
+
+                <div class="col-12 col-md-5">
+                    @if (!string.IsNullOrWhiteSpace(Model.AwayTeamLogoUrl))
+                    {
+                        <img src="@Model.AwayTeamLogoUrl"
+                             alt="@Model.AwayTeamName"
+                             class="img-fluid mb-3"
+                             style="width: 150px; height: 150px; object-fit: contain;" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center mx-auto mb-3"
+                             style="width: 150px; height: 150px;">
+                            <strong class="fs-3">FC</strong>
+                        </div>
+                    }
+
+                    <h2 class="fw-bold">@Model.AwayTeamName</h2>
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <h4 class="text-center mb-3">Cuotas</h4>
+
+            <div class="row text-center g-3">
+
+                <div class="col-12 col-md-4">
+                    <div class="border rounded p-3">
+                        <div class="text-muted">Victoria local</div>
+                        <div class="fs-4 fw-bold">
+                            @Model.HomeOdds.ToString("0.00")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="border rounded p-3">
+                        <div class="text-muted">Empate</div>
+                        <div class="fs-4 fw-bold">
+                            @Model.DrawOdds.ToString("0.00")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="border rounded p-3">
+                        <div class="text-muted">Victoria visitante</div>
+                        <div class="fs-4 fw-bold">
+                            @Model.AwayOdds.ToString("0.00")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted">
+                    Apuestas realizadas: <strong>@Model.BetsCount</strong>
+                </p>
+
+                <button type="button"
+                        class="btn btn-success btn-lg"
+                        disabled="@(!canBet)">
+                    Apostar (Módulo 8)
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-controller="Matches"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Volver a partidos
+        </a>
+    </div>
+
+</div>
