@@ -1,4 +1,6 @@
 using GolBet.Repositories.Data;
+using GolBet.Repositories.Interfaces;
+using GolBet.Repositories.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +12,15 @@ builder.Services.AddDbContext<GolBetDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("GolBetConnection")));
 
-var app = builder.Build();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<MatchRepository>();
 
+var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<GolBetDbContext>();
+    await GolBetDbSeeder.SeedAsync(context);
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
