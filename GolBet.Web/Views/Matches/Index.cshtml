@@ -1,0 +1,145 @@
+@model IEnumerable<GolBet.Services.DTOs.MatchDto>
+
+@{
+    ViewData["Title"] = "Partidos";
+}
+
+<div class="container py-4">
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold">Partidos</h1>
+        <p class="text-muted">Consulta los próximos encuentros y sus cuotas.</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            No hay partidos disponibles.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var match in Model)
+            {
+                var colombiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+                var matchDateUtc = DateTime.SpecifyKind(match.MatchDate, DateTimeKind.Utc);
+                var colombiaDate = TimeZoneInfo.ConvertTimeFromUtc(matchDateUtc, colombiaTimeZone);
+
+                var statusText = match.Status switch
+                {
+                    GolBet.Entities.Enums.MatchStatus.Programado => "Programado",
+                    GolBet.Entities.Enums.MatchStatus.EnVivo => "En Vivo",
+                    GolBet.Entities.Enums.MatchStatus.Finalizado => "Finalizado",
+                    _ => "Desconocido"
+                };
+
+                var statusClass = match.Status switch
+                {
+                    GolBet.Entities.Enums.MatchStatus.Programado => "bg-primary",
+                    GolBet.Entities.Enums.MatchStatus.EnVivo => "bg-danger",
+                    GolBet.Entities.Enums.MatchStatus.Finalizado => "bg-secondary",
+                    _ => "bg-dark"
+                };
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <small class="text-muted">
+                                    @colombiaDate.ToString("dd/MM/yyyy HH:mm") 🇨🇴
+                                </small>
+
+                                <span class="badge @statusClass">
+                                    @statusText
+                                </span>
+                            </div>
+
+                            <div class="row text-center align-items-center">
+
+                                <div class="col-5">
+                                    @if (!string.IsNullOrWhiteSpace(match.HomeTeamLogoUrl))
+                                    {
+                                        <img src="@match.HomeTeamLogoUrl"
+                                             alt="@match.HomeTeamName"
+                                             class="img-fluid mb-2"
+                                             style="width: 70px; height: 70px; object-fit: contain;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center mx-auto mb-2"
+                                             style="width: 70px; height: 70px;">
+                                            <strong>FC</strong>
+                                        </div>
+                                    }
+
+                                    <div class="fw-bold">@match.HomeTeamName</div>
+                                </div>
+
+                                <div class="col-2">
+                                    <strong>VS</strong>
+
+                                    @if (match.Status == GolBet.Entities.Enums.MatchStatus.Finalizado)
+                                    {
+                                        <div class="mt-2 fs-4 fw-bold">
+                                            @match.HomeScore - @match.AwayScore
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="col-5">
+                                    @if (!string.IsNullOrWhiteSpace(match.AwayTeamLogoUrl))
+                                    {
+                                        <img src="@match.AwayTeamLogoUrl"
+                                             alt="@match.AwayTeamName"
+                                             class="img-fluid mb-2"
+                                             style="width: 70px; height: 70px; object-fit: contain;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center mx-auto mb-2"
+                                             style="width: 70px; height: 70px;">
+                                            <strong>FC</strong>
+                                        </div>
+                                    }
+
+                                    <div class="fw-bold">@match.AwayTeamName</div>
+                                </div>
+
+                            </div>
+
+                            <hr />
+
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <small class="text-muted d-block">1</small>
+                                    <strong>@match.HomeOdds.ToString("0.00")</strong>
+                                </div>
+
+                                <div class="col-4">
+                                    <small class="text-muted d-block">X</small>
+                                    <strong>@match.DrawOdds.ToString("0.00")</strong>
+                                </div>
+
+                                <div class="col-4">
+                                    <small class="text-muted d-block">2</small>
+                                    <strong>@match.AwayOdds.ToString("0.00")</strong>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-3">
+                                <a asp-controller="Matches"
+                                   asp-action="Detail"
+                                   asp-route-id="@match.Id"
+                                   class="btn btn-outline-success">
+                                    Ver detalle
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

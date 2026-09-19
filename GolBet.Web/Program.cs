@@ -1,3 +1,6 @@
+using GolBet.Services.Interfaces;
+using GolBet.Services.Mapping;
+using GolBet.Services.Services;
 using GolBet.Repositories.Data;
 using GolBet.Repositories.Interfaces;
 using GolBet.Repositories.Repositories;
@@ -14,6 +17,8 @@ builder.Services.AddDbContext<GolBetDbContext>(options =>
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<MatchRepository>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped<IMatchService, MatchService>();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
