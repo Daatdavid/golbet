@@ -13,9 +13,12 @@ public class MatchesController : Controller
         _matchService = matchService;
     }
 
-    public async Task<IActionResult> Index(string? status)
+
+
+
+    public async Task<IActionResult> Index(string? status, string? search)
     {
-        var matches = await _matchService.GetAllAsync();
+        var matches = await _matchService.GetAllAsync(search);
 
         if (!string.IsNullOrWhiteSpace(status))
         {
@@ -25,8 +28,12 @@ public class MatchesController : Controller
             }
         }
 
+        ViewBag.CurrentStatus = status;
+      ViewBag.CurrentSearch = search;
+
         return View(matches);
     }
+
 
     public async Task<IActionResult> Detail(int id)
     {
