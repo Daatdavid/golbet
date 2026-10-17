@@ -18,12 +18,12 @@ public class MatchService : IMatchService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<MatchDto>> GetAllAsync()
-    {
-        var matches = await _matchRepository.GetAllWithTeamsAsync();
+    public async Task<IEnumerable<MatchDto>> GetAllAsync(string? search = null)
+{
+    var matches = await _matchRepository.GetAllWithTeamsAsync(search);
 
-        return _mapper.Map<IEnumerable<MatchDto>>(matches);
-    }
+    return _mapper.Map<IEnumerable<MatchDto>>(matches);
+}
 
     public async Task<MatchDto?> GetByIdAsync(int id)
     {

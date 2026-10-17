@@ -12,13 +12,26 @@ public class MatchRepository : GenericRepository<Match>
     {
     }
 
-    public async Task<IEnumerable<Match>> GetAllWithTeamsAsync()
+
+public async Task<IEnumerable<Match>> GetAllWithTeamsAsync(string? search = null)
+{
+    var query = _context.Matches
+        .Include(m => m.HomeTeam)
+        .Include(m => m.AwayTeam)
+        .AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(search))
     {
-        return await _context.Matches
-            .Include(m => m.HomeTeam)
-            .Include(m => m.AwayTeam)
-            .ToListAsync();
+        var searchTerm = search.Trim().ToLower();
+
+        query = query.Where(m =>
+            m.HomeTeam.Name.ToLower().Contains(searchTerm) ||
+            m.AwayTeam.Name.ToLower().Contains(searchTerm));
     }
+
+    return await query.ToListAsync();
+}
+
 
     public async Task<Match?> GetByIdWithTeamsAsync(int id)
     {
