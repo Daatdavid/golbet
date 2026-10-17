@@ -1,9 +1,11 @@
+
 @model IEnumerable<GolBet.Services.DTOs.MatchDto>
 
 @{
     ViewData["Title"] = "Partidos";
 
-    var currentStatus = Context.Request.Query["status"].ToString();
+    var currentStatus = ViewBag.CurrentStatus as string ?? "";
+    var currentSearch = ViewBag.CurrentSearch as string ?? "";
 }
 
 <div class="container py-4">
@@ -12,9 +14,36 @@
         <p class="text-muted">Consulta los próximos encuentros y sus cuotas.</p>
     </div>
 
+    <form asp-controller="Matches"
+          asp-action="Index"
+          method="get"
+          class="row g-2 justify-content-center mb-4">
+
+        <div class="col-12 col-md-6">
+            <input type="text"
+                   name="search"
+                   value="@currentSearch"
+                   class="form-control"
+                   placeholder="Buscar equipo..."
+                   aria-label="Buscar equipo" />
+        </div>
+
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success">
+                Buscar
+            </button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(currentStatus))
+        {
+            <input type="hidden" name="status" value="@currentStatus" />
+        }
+    </form>
+
     <div class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
         <a asp-controller="Matches"
            asp-action="Index"
+           asp-route-search="@currentSearch"
            class="btn @(string.IsNullOrEmpty(currentStatus) ? "btn-success" : "btn-outline-success")">
             Todos
         </a>
@@ -22,6 +51,7 @@
         <a asp-controller="Matches"
            asp-action="Index"
            asp-route-status="Programado"
+           asp-route-search="@currentSearch"
            class="btn @(currentStatus == "Programado" ? "btn-success" : "btn-outline-success")">
             Programados
         </a>
@@ -29,6 +59,7 @@
         <a asp-controller="Matches"
            asp-action="Index"
            asp-route-status="EnVivo"
+           asp-route-search="@currentSearch"
            class="btn @(currentStatus == "EnVivo" ? "btn-success" : "btn-outline-success")">
             En Vivo
         </a>
@@ -36,6 +67,7 @@
         <a asp-controller="Matches"
            asp-action="Index"
            asp-route-status="Finalizado"
+           asp-route-search="@currentSearch"
            class="btn @(currentStatus == "Finalizado" ? "btn-success" : "btn-outline-success")">
             Finalizados
         </a>
@@ -44,7 +76,20 @@
     @if (!Model.Any())
     {
         <div class="alert alert-info text-center">
-            No hay partidos disponibles.
+            @if (!string.IsNullOrWhiteSpace(currentSearch))
+            {
+                <p class="mb-2">No hay partidos para "@currentSearch".</p>
+
+                <a asp-controller="Matches"
+                   asp-action="Index"
+                   class="btn btn-outline-success">
+                    Ver toda la cartelera
+                </a>
+            }
+            else
+            {
+                <p class="mb-0">No hay partidos disponibles.</p>
+            }
         </div>
     }
     else
