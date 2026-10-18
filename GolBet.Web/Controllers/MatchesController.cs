@@ -1,3 +1,4 @@
+
 using GolBet.Entities.Enums;
 using GolBet.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -13,27 +14,23 @@ public class MatchesController : Controller
         _matchService = matchService;
     }
 
-
-
-
     public async Task<IActionResult> Index(string? status, string? search)
     {
-        var matches = await _matchService.GetAllAsync(search);
+        MatchStatus? parsedStatus = null;
 
-        if (!string.IsNullOrWhiteSpace(status))
+        if (!string.IsNullOrWhiteSpace(status) &&
+            Enum.TryParse<MatchStatus>(status, true, out var statusValue))
         {
-            if (Enum.TryParse<MatchStatus>(status, true, out var parsedStatus))
-            {
-                matches = matches.Where(m => m.Status == parsedStatus);
-            }
+            parsedStatus = statusValue;
         }
 
+        var matches = await _matchService.GetAllAsync(search, parsedStatus);
+
         ViewBag.CurrentStatus = status;
-      ViewBag.CurrentSearch = search;
+        ViewBag.CurrentSearch = search;
 
         return View(matches);
     }
-
 
     public async Task<IActionResult> Detail(int id)
     {

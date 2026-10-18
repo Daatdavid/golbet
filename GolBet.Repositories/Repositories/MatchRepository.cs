@@ -1,4 +1,6 @@
+
 using GolBet.Entities;
+using GolBet.Entities.Enums;
 using GolBet.Repositories.Data;
 using GolBet.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,26 +14,31 @@ public class MatchRepository : GenericRepository<Match>
     {
     }
 
-
-public async Task<IEnumerable<Match>> GetAllWithTeamsAsync(string? search = null)
-{
-    var query = _context.Matches
-        .Include(m => m.HomeTeam)
-        .Include(m => m.AwayTeam)
-        .AsQueryable();
-
-    if (!string.IsNullOrWhiteSpace(search))
+    public async Task<IEnumerable<Match>> GetAllWithTeamsAsync(
+        string? search = null,
+        MatchStatus? status = null)
     {
-        var searchTerm = search.Trim().ToLower();
+        var query = _context.Matches
+            .Include(m => m.HomeTeam)
+            .Include(m => m.AwayTeam)
+            .AsQueryable();
 
-        query = query.Where(m =>
-            m.HomeTeam.Name.ToLower().Contains(searchTerm) ||
-            m.AwayTeam.Name.ToLower().Contains(searchTerm));
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchTerm = search.Trim().ToLower();
+
+            query = query.Where(m =>
+                m.HomeTeam.Name.ToLower().Contains(searchTerm) ||
+                m.AwayTeam.Name.ToLower().Contains(searchTerm));
+        }
+
+        if (status.HasValue)
+        {
+            query = query.Where(m => m.Status == status.Value);
+        }
+
+        return await query.ToListAsync();
     }
-
-    return await query.ToListAsync();
-}
-
 
     public async Task<Match?> GetByIdWithTeamsAsync(int id)
     {
